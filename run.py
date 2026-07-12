@@ -3,27 +3,30 @@ import time
 import os
 import sys
 
-# Deteta a porta que a Railway vai dar para a aplicação (padrão é a variável PORT)
-porta_nuvem = os.getenv("PORT", "8501")
+# 1. A Railway injeta a porta pública na variável PORT. 
+# Vamos dar essa porta para o Streamlit (Frontend) ser visto na internet!
+porta_publica_nuvem = os.getenv("PORT", "8501")
 
-# 1. Força o dashboard a apontar para a API local interna (na porta 8000)
-os.environ["URL_API_BACKEND"] = "http://127.0.0.1:8000"
+# 2. Vamos fixar o FastAPI (Backend) numa porta interna alternativa (ex: 8080)
+porta_interna_fastapi = "8080"
 
-print("🚀 A iniciar o Backend FastAPI na porta 8000...")
+# Força o dashboard do Streamlit a apontar para a API local interna
+os.environ["URL_API_BACKEND"] = f"http://127.0.0.1:{porta_interna_fastapi}"
+
+print(f"🚀 A iniciar o Backend FastAPI na porta interna {porta_interna_fastapi}...")
 backend_process = subprocess.Popen([
     sys.executable, "-m", "uvicorn", "src.importa_gastos.main:app",
     "--host", "127.0.0.1",
-    "--port", "8000"
+    "--port", porta_interna_fastapi
 ])
 
-# Aguarda 3 segundos para o backend estabilizar antes de abrir a interface
+# Aguarda 3 segundos para o backend estabilizar
 time.sleep(3)
 
-print(f"🖥️ A iniciar o Streamlit Dashboard na porta {porta_nuvem}...")
-# Inicia o streamlit apontando para o teu dashboard original
+print(f"🖥️ A iniciar o Streamlit Dashboard na porta pública {porta_publica_nuvem}...")
 streamlit_process = subprocess.Popen([
     sys.executable, "-m", "streamlit", "run", "dashboard.py",
-    "--server.port", porta_nuvem,
+    "--server.port", porta_publica_nuvem,
     "--server.address", "0.0.0.0",
     "--server.headless", "true"
 ])
