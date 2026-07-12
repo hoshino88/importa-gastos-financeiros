@@ -1,1 +1,1 @@
-web: python run.py
+web: PORT=8000 python run.py

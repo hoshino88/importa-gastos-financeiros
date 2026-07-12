@@ -3,11 +3,10 @@ import time
 import os
 import sys
 
-# 1. A Railway injeta a porta pública na variável PORT. 
-# Vamos dar essa porta para o Streamlit (Frontend) ser visto na internet!
-porta_publica_nuvem = os.getenv("PORT", "8501")
+# 1. Força a porta principal a ser a 8000 (onde o tráfego público do Railway vai chegar)
+porta_publica_nuvem = os.getenv("PORT", "8000")
 
-# 2. Vamos fixar o FastAPI (Backend) numa porta interna alternativa (ex: 8080)
+# 2. Fixa o FastAPI (Backend) numa porta interna alternativa
 porta_interna_fastapi = "8080"
 
 # Força o dashboard do Streamlit a apontar para a API local interna
