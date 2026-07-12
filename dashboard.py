@@ -1,13 +1,17 @@
 import streamlit as str_ui
 import httpx
 import pandas as pd
+import os
 from sqlalchemy import create_engine, text
 from src.core.database import DATABASE_URL
 
 # --- CONFIGURAÇÕES INICIAIS ---
 str_ui.set_page_config(page_title="Gerenciador Finanças", page_icon="💰", layout="wide")
 engine = create_engine(DATABASE_URL)
-URL_API = "http://127.0.0.1:8000"
+
+# Pega a URL dinâmica configurada no run.py. 
+# Se você estiver rodando localmente no VS Code sem o run.py, ele usa o padrão 127.0.0.1:8080
+URL_API = os.getenv("URL_API_BACKEND", "http://127.0.0.1:8080")
 
 if "logado" not in str_ui.session_state:
     str_ui.session_state.update({"logado": False, "usuario_id": None, "username": ""})
