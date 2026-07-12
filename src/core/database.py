@@ -1,10 +1,17 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# URL de conexão local padrão do PostgreSQL
-# Formato: postgresql://usuario:senha@servidor:porta/nome_do_banco
-# NOTA: Quando você instalar o Postgres no Windows, mudaremos a 'sua_senha' aqui
-DATABASE_URL = "postgresql://postgres:1234@localhost:5432/financas_db"
+# 1. Tenta buscar a variável DATABASE_URL da Railway/Neon. 
+# Se não encontrar (como quando você roda localmente no VS Code), ele usa o seu banco local como plano B!
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", 
+    "postgresql://postgres:1234@localhost:5432/financas_db"
+)
+
+# 2. Pequeno ajuste de segurança para garantir compatibilidade com o SQLAlchemy na nuvem
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 # O motor que gerencia as conexões físicas com o banco
 engine = create_engine(DATABASE_URL)
